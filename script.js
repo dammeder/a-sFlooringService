@@ -46,6 +46,76 @@ phoneInput.addEventListener('input', (e) => {
     e.target.value = value;
 });
 
+// Custom Dropdown Functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const customSelects = document.querySelectorAll('.custom-select-wrapper');
+    
+    customSelects.forEach(wrapper => {
+        const trigger = wrapper.querySelector('.custom-select-trigger');
+        const options = wrapper.querySelector('.custom-select-options');
+        const valueDisplay = wrapper.querySelector('.custom-select-value');
+        const hiddenSelect = wrapper.querySelector('select');
+        const selectName = trigger.getAttribute('data-select');
+        
+        // Toggle dropdown
+        trigger.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Close other dropdowns
+            document.querySelectorAll('.custom-select-trigger.active').forEach(t => {
+                if (t !== trigger) {
+                    t.classList.remove('active');
+                    t.nextElementSibling.classList.remove('active');
+                }
+            });
+            
+            trigger.classList.toggle('active');
+            options.classList.toggle('active');
+        });
+        
+        // Handle option selection
+        options.querySelectorAll('.custom-select-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.stopPropagation();
+                
+                const value = option.getAttribute('data-value');
+                const text = option.textContent;
+                
+                // Update display
+                valueDisplay.textContent = text;
+                valueDisplay.classList.remove('placeholder');
+                
+                // Update hidden select
+                hiddenSelect.value = value;
+                
+                // Update selected state
+                options.querySelectorAll('.custom-select-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                option.classList.add('selected');
+                
+                // Close dropdown
+                trigger.classList.remove('active');
+                options.classList.remove('active');
+                
+                // Clear validation error if present
+                const formGroup = wrapper.closest('.form-group');
+                if (formGroup) {
+                    formGroup.classList.remove('error');
+                }
+            });
+        });
+    });
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.custom-select-trigger.active').forEach(trigger => {
+            trigger.classList.remove('active');
+            trigger.nextElementSibling.classList.remove('active');
+        });
+    });
+});
+
 // Multi-Step Form Logic
 let currentStep = 1;
 const totalSteps = 3;
@@ -110,67 +180,51 @@ function validateStep(step) {
     const inputs = currentFormStep.querySelectorAll('input[required], select[required], textarea[required]');
     
     let isValid = true;
+    let firstInvalidField = null;
+    
     inputs.forEach(input => {
+        const formGroup = input.closest('.form-group');
+        
         if (!input.value.trim()) {
             isValid = false;
-            input.style.borderColor = '#ff4444';
-            setTimeout(() => {
-                input.style.borderColor = '';
-            }, 2000);
+            formGroup.classList.add('error');
+            
+            if (!firstInvalidField) {
+                firstInvalidField = input;
+            }
+        } else {
+            formGroup.classList.remove('error');
         }
     });
     
-    if (!isValid) {
-        alert('Please fill in all required fields before continuing.');
+    if (!isValid && firstInvalidField) {
+        firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        firstInvalidField.focus();
     }
     
     return isValid;
 }
 
-// Load Google Maps API dynamically
-function loadGoogleMapsAPI() {
-    if (typeof CONFIG !== 'undefined' && CONFIG.GOOGLE_PLACES_API_KEY) {
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${CONFIG.GOOGLE_PLACES_API_KEY}&libraries=places&callback=initAutocomplete`;
-        script.async = true;
-        script.defer = true;
-        document.getElementById('google-maps-script').replaceWith(script);
-    } else {
-        console.warn('Google Places API key not configured');
-    }
-}
-
-// Google Places Autocomplete
-let autocomplete;
-
-function initAutocomplete() {
-    const addressInput = document.getElementById('address');
+// Clear validation errors on input
+document.addEventListener('DOMContentLoaded', () => {
+    const formInputs = document.querySelectorAll('.form-group input, .form-group select, .form-group textarea');
     
-    if (!addressInput) return;
-    
-    if (typeof google === 'undefined') {
-        console.warn('Google Maps API not loaded');
-        return;
-    }
-    
-    autocomplete = new google.maps.places.Autocomplete(addressInput, {
-        types: ['address'],
-        componentRestrictions: { country: 'us' }
+    formInputs.forEach(input => {
+        input.addEventListener('input', () => {
+            const formGroup = input.closest('.form-group');
+            if (input.value.trim()) {
+                formGroup.classList.remove('error');
+            }
+        });
+        
+        input.addEventListener('change', () => {
+            const formGroup = input.closest('.form-group');
+            if (input.value.trim()) {
+                formGroup.classList.remove('error');
+            }
+        });
     });
-    
-    autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        if (place.formatted_address) {
-            addressInput.value = place.formatted_address;
-        }
-    });
-}
-
-// Make initAutocomplete available globally for the Google Maps callback
-window.initAutocomplete = initAutocomplete;
-
-// Load Google Maps API when page loads
-document.addEventListener('DOMContentLoaded', loadGoogleMapsAPI);
+});
 
 // Form Submission
 const contactForm = document.getElementById('contactForm');
@@ -189,7 +243,6 @@ contactForm.addEventListener('submit', async (e) => {
         phone: document.getElementById('phone').value,
         email: document.getElementById('email').value || 'Not provided',
         service: document.getElementById('service').value,
-        material: document.getElementById('material').value || 'Not specified',
         sqft: document.getElementById('sqft').value || 'Not specified',
         address: document.getElementById('address').value,
         timeline: document.getElementById('timeline').value,
@@ -205,8 +258,7 @@ contactForm.addEventListener('submit', async (e) => {
     
     try {
         // Submit to Google Apps Script
-        // Replace with your actual Google Apps Script Web App URL
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxTr94HPSAa-RlEjV50NG-QVRAre6HaJC7oQ8xqmsdZM4UJhmRA1ufclJ1vQPY_CSd7/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbzgXQJfxDmeyl1ZXrCQYl5dmzr07-3WN_9HPNyMKZ9taK6BqK_lE2RdyQrg1amzuIc2/exec';
         
         const response = await fetch(scriptURL, {
             method: 'POST',
@@ -227,7 +279,7 @@ contactForm.addEventListener('submit', async (e) => {
         
     } catch (error) {
         console.error('Error submitting form:', error);
-        alert('There was an error submitting your request. Please try calling us directly at (215) 555-0100.');
+        alert('There was an error submitting your request. Please try calling us directly at (267) 265-8997.');
         submitButton.textContent = originalText;
         submitButton.disabled = false;
     }

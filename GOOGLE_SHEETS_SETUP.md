@@ -9,9 +9,9 @@ This guide will walk you through setting up the contact form to save submissions
 3. Name it **"A&S Flooring Leads"**
 4. Set up the following column headers in Row 1:
 
-| A | B | C | D | E | F | G | H | I | J |
-|---|---|---|---|---|---|---|---|---|---|
-| Timestamp | Name | Phone | Email | Service | Material | Square Footage | Address | Timeline | Notes |
+| A | B | C | D | E | F | G | H | I |
+|---|---|---|---|---|---|---|---|---|
+| Timestamp | Name | Phone | Email | Service | Square Footage | Address | Timeline | Notes |
 
 5. Save the spreadsheet
 
@@ -23,7 +23,7 @@ This guide will walk you through setting up the contact form to save submissions
 
 ```javascript
 // Configuration - UPDATE THESE VALUES
-const OWNER_PHONE = '+12155550100'; // Replace with Ozzy's actual phone number (format: +1XXXXXXXXXX)
+const OWNER_PHONE = '+12672658997'; // Ozzy's phone number (format: +1XXXXXXXXXX)
 const TEXTBELT_API_KEY = 'textbelt'; // Use 'textbelt' for free tier, or your paid API key
 
 // Main function to handle form submissions
@@ -42,86 +42,6 @@ function doPost(e) {
       data.phone,
       data.email,
       data.service,
-      data.material,
-      data.sqft,
-      data.address,
-      data.timeline,
-      data.notes
-    ]);
-```javascript
-// Configuration - UPDATE THESE VALUES
-const OWNER_PHONE = '+12155550100'; // Replace with Ozzy's actual phone number (format: +1XXXXXXXXXX)
-const TEXTBELT_API_KEY = 'textbelt'; // Use 'textbelt' for free tier, or your paid API key
-
-// Main function to handle form submissions
-function doPost(e) {
-  try {
-    // Parse the incoming data
-    const data = JSON.parse(e.postData.contents);
-    
-    // Get the active spreadsheet
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Append the data to the sheet
-    sheet.appendRow([
-      data.timestamp,
-      data.name,
-      data.phone,
-      data.email,
-      data.service,
-      data.material,
-      data.sqft,
-      data.address,
-      data.timeline,
-      data.notes
-```javascript
-// Configuration - UPDATE THESE VALUES
-const OWNER_PHONE = '+12155550100'; // Replace with Ozzy's actual phone number (format: +1XXXXXXXXXX)
-const TEXTBELT_API_KEY = 'textbelt'; // Use 'textbelt' for free tier, or your paid API key
-
-// Main function to handle form submissions
-function doPost(e) {
-  try {
-    // Parse the incoming data
-    const data = JSON.parse(e.postData.contents);
-    
-    // Get the active spreadsheet
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Append the data to the sheet
-    sheet.appendRow([
-      data.timestamp,
-      data.name,
-      data.phone,
-      data.email,
-      data.service,
-      data.material,
-      data.sqft,
-      data.address,
-      data.timeline,
-      data.notes
-```javascript
-// Configuration - UPDATE THESE VALUES
-const OWNER_PHONE = '+12155550100'; // Replace with Ozzy's actual phone number (format: +1XXXXXXXXXX)
-const TEXTBELT_API_KEY = 'textbelt'; // Use 'textbelt' for free tier, or your paid API key
-
-// Main function to handle form submissions
-function doPost(e) {
-  try {
-    // Parse the incoming data
-    const data = JSON.parse(e.postData.contents);
-    
-    // Get the active spreadsheet
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    
-    // Append the data to the sheet
-    sheet.appendRow([
-      data.timestamp,
-      data.name,
-      data.phone,
-      data.email,
-      data.service,
-      data.material,
       data.sqft,
       data.address,
       data.timeline,
@@ -328,7 +248,7 @@ The script automatically formats customer phone numbers from `(215) 555-0100` to
 
 ### Export Leads
 - File → Download → CSV or Excel format
-
+f
 ## SMS Cost Estimates
 
 **Textbelt Pricing**:
