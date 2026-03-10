@@ -278,12 +278,42 @@ contactForm.addEventListener('submit', async (e) => {
         currentStep = 1;
         
     } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('There was an error submitting your request. Please try calling us directly at (267) 265-8997.');
+        console.error('Form submission error:', error);
         submitButton.textContent = originalText;
         submitButton.disabled = false;
+        alert('There was an error submitting your request. Please try calling us instead.');
     }
 });
+
+// Gallery Load More / Collapse Toggle
+const galleryLoadMore = document.getElementById('galleryLoadMore');
+const hiddenGalleryItems = document.querySelectorAll('.gallery-item.hidden');
+
+if (galleryLoadMore) {
+    galleryLoadMore.addEventListener('click', () => {
+        const isExpanded = galleryLoadMore.textContent === 'Collapse Gallery';
+        
+        if (isExpanded) {
+            // Collapse - hide items again
+            hiddenGalleryItems.forEach(item => {
+                item.classList.add('hidden');
+            });
+            galleryLoadMore.textContent = 'View All Gallery';
+            
+            // Scroll to gallery section
+            document.getElementById('gallery').scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        } else {
+            // Expand - show all items
+            hiddenGalleryItems.forEach(item => {
+                item.classList.remove('hidden');
+            });
+            galleryLoadMore.textContent = 'Collapse Gallery';
+        }
+    });
+}
 
 // Scroll animations (fade in on scroll)
 const observerOptions = {
